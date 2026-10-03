@@ -106,7 +106,7 @@ and real environment variables take precedence over it.
 | `DATABASE_POOL_MAX`      | `10`                                                        | Maximum pooled connections                                                                                                                               |
 | `EMBEDDED_PG_DIR`        | `./data/postgres`                                           | Embedded Postgres data folder, relative to `server/`                                                                                                     |
 | `CORS_ORIGIN`            | `http://localhost:5173`                                     | Comma-separated list                                                                                                                                     |
-| `API_TOKEN`              | none                                                        | Optional (16+ chars). When set, requests that change data need `Authorization: Bearer <token>`; the Vite dev proxy adds it, so the browser never sees it |
+| `API_TOKEN`              | none                                                        | Optional (16+ chars). When set, requests that change data need `Authorization: Bearer <token>`; the Vite dev proxy adds it, so the browser never sees it. Leave unset when deployed; `off` also means unset (for hosts that demand a value) |
 
 ## API
 

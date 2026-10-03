@@ -28,11 +28,12 @@ const envSchema = z.object({
   EMBEDDED_PG_DIR: z.string().min(1).default('./data/postgres'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
   // Optional: when set (16+ chars), requests that change data need "Authorization: Bearer <token>".
+  // Empty or "off"/"none"/"false"/"disabled" turns it off (for hosts whose forms require a value).
   API_TOKEN: z
     .string()
     .trim()
     .optional()
-    .transform((v) => (v ? v : undefined))
+    .transform((v) => (v && !/^(off|none|false|disabled)$/i.test(v) ? v : undefined))
     .refine((v) => v === undefined || v.length >= 16, 'must be at least 16 characters'),
   // Optional at boot so the app can start without AI; AI endpoints return 503 when missing.
   GEMINI_API_KEY: z

@@ -40,6 +40,12 @@ describe('environment validation', () => {
     }
   });
 
+  it('treats API_TOKEN "off" (for hosts that require a value) as no token', () => {
+    for (const value of ['off', 'OFF', 'none', 'false', 'disabled']) {
+      assert.equal(loadEnv({ API_TOKEN: value }).code, 0, `API_TOKEN=${value} should start`);
+    }
+  });
+
   it('starts without a Gemini key (AI features report AI_NOT_CONFIGURED instead)', () => {
     assert.equal(loadEnv({ GEMINI_API_KEY: '' }).code, 0);
   });
