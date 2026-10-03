@@ -1,0 +1,36 @@
+{
+  "name": "small-business-order-manager",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered order management for small businesses, built on the Gemini API",
+  "workspaces": [
+    "shared",
+    "server",
+    "web"
+  ],
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "build:shared": "npm run build -w shared",
+    "dev": "npm run build:shared && concurrently -n db,server,web -c green,blue,magenta \"npm run db:start -w server\" \"npm run dev -w server\" \"npm run dev -w web\"",
+    "build": "npm run build:shared && npm run build -w server && npm run build -w web",
+    "typecheck": "npm run build:shared && npm run typecheck -w server && npm run typecheck -w web",
+    "test": "npm run build:shared && npm run test -w server",
+    "test:unit": "npm run build:shared && npm run test:unit -w server",
+    "start": "npm run start -w server",
+    "db:start": "npm run db:start -w server",
+    "db:migrate": "npm run build:shared && npm run db:migrate -w server",
+    "db:seed": "npm run build:shared && npm run db:seed -w server",
+    "db:reset": "npm run build:shared && npm run db:reset -w server",
+    "db:status": "npm run build:shared && npm run db:status -w server",
+    "db:check": "npm run build:shared && npm run db:check -w server",
+    "format": "prettier --write .",
+    "dev:app": "npm run build:shared && concurrently -n server,web -c blue,magenta \"npm run dev -w server\" \"npm run dev -w web\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  }
+}

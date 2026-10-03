@@ -1,0 +1,31 @@
+# Render Blueprint: one free web service that runs the API and serves the web app.
+# Database: a free Neon PostgreSQL (use its DIRECT connection string, not the pooled one).
+# Deploy: Render dashboard → New → Blueprint → pick this repo → fill in the secret values.
+services:
+  - type: web
+    name: small-business-order-manager
+    runtime: node
+    plan: free
+    # Dev dependencies (TypeScript, Vite) are needed to build.
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: '22.13.0'
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: DATABASE_URL
+        sync: false # paste the Neon direct connection string (…?sslmode=require)
+      - key: DATABASE_POOL_MAX
+        value: '5'
+      - key: GEMINI_API_KEY
+        sync: false # paste your Gemini API key
+      - key: GEMINI_MODEL
+        value: gemini-3.6-flash
+      - key: GEMINI_FALLBACK_MODELS
+        value: gemini-3.5-flash,gemini-3.8-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite
+      - key: GEMINI_MIN_INTERVAL_MS
+        value: '4000'

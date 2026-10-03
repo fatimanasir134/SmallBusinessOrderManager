@@ -1,0 +1,38 @@
+{
+  "name": "@sbom/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/index.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "db:start": "tsx src/db/embedded.ts",
+    "db:migrate": "tsx src/db/cli.ts migrate",
+    "db:seed": "tsx src/db/cli.ts seed",
+    "db:reset": "tsx src/db/cli.ts reset",
+    "db:status": "tsx src/db/cli.ts status",
+    "db:check": "tsx src/db/cli.ts check",
+    "test": "tsx --import ./src/test/setup.ts --test --test-concurrency=1 \"src/**/*.test.ts\"",
+    "test:unit": "tsx --import ./src/test/setup.ts --test \"src/domain/*.test.ts\" \"src/ai/*.test.ts\" \"src/agents/*.test.ts\" \"src/tools/registry.test.ts\" \"src/app.test.ts\" \"src/workflow/approvalPacket.test.ts\" \"src/security.test.ts\" \"src/middleware/*.test.ts\" \"src/config/*.test.ts\""
+  },
+  "dependencies": {
+    "@google/genai": "^1.20.0",
+    "@sbom/shared": "*",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "pg": "^8.23.1",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.25.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0",
+    "@types/pg": "^8.23.1",
+    "embedded-postgres": "^18.4.0-beta.17",
+    "tsx": "^4.19.2"
+  }
+}
