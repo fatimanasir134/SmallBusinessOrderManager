@@ -318,27 +318,37 @@ backend sets from who is calling, never from the model's arguments.
 
 ## Deploy (free: Render + Neon)
 
-In production the API server also serves the built web app, so it's **one service and one URL**.
-Migrations run on startup, and the demo data is loaded automatically into an empty database.
+In production the API server also serves the built web app, so it's **one service and one URL**. Migrations run on
+startup, and the demo data is loaded automatically into an empty database.
 
-1. **Database (Neon, free):** create a project at <https://neon.tech>. Copy the **direct** connection string
-   (not the "pooled" one: the migration lock needs a direct connection). It looks like
-   `postgresql://user:password@ep-xxx.region.aws.neon.tech/neondb?sslmode=require`.
-2. **Code on GitHub:** push this repo to GitHub (`.env` and `server/data/` are git-ignored, so no secrets or
-   local database files are uploaded).
-3. **App (Render, free):** in the Render dashboard choose **New → Blueprint**, pick the repo; it reads
-   [render.yaml](render.yaml). Fill in the two secrets it asks for: `DATABASE_URL` (from Neon) and
-   `GEMINI_API_KEY`. Deploy.
-4. Open `https://<your-service>.onrender.com`. Health check: `/api/health`.
+1. **Database (Neon, free):** create a project at <https://neon.tech>, click **Connect**, turn **off**
+   "Connection pooling" (the migration lock needs a direct connection), and copy the string ending in
+   `?sslmode=require`.
+2. **Code on GitHub:** push this repo (`.env` and `server/data/` are git-ignored, so no secrets are uploaded).
+3. **App (Render, free):** create the service **manually**, not with "Blueprint" (Blueprints often ask for a card):
+   **New → Web Service** → connect GitHub → pick the repo, then set:
+
+   | Setting       | Value                                   |
+   | ------------- | --------------------------------------- |
+   | Language      | Node                                    |
+   | Branch        | your branch (`master` or `main`)        |
+   | Build command | `npm ci --include=dev && npm run build` |
+   | Start command | `npm start`                             |
+   | Instance type | **Free**                                |
+   | Health check  | `/api/health` (under Advanced)          |
+
+   Environment variables: `DATABASE_URL` (Neon), `GEMINI_API_KEY`, `NODE_ENV=production`, `DATABASE_POOL_MAX=5`,
+   and optionally `GEMINI_FALLBACK_MODELS`. The Node version comes from `.node-version`.
+
+4. Open `https://<your-service>.onrender.com` and check `/api/health`.
 
 Notes:
 
-- Render's free plan sleeps after ~15 minutes idle; the first request then takes about a minute. Open the site a
-  minute before you present.
-- A public URL lets anyone trigger Gemini calls on your key. Share it only with judges, or set `API_TOKEN`
-  (the deployed web app can then only read, so use it for a read-only showcase).
-- To try production locally: `npm run build`, then `NODE_ENV=production npm start` (with Postgres running) and
-  open <http://localhost:3001>.
+- Free services sleep after ~15 minutes idle; the first visit then takes about a minute. Open the site before judging.
+- A public URL lets anyone trigger Gemini calls on your key: share it with judges only.
+- [render.yaml](render.yaml) describes the same setup as a Blueprint, and the [Dockerfile](Dockerfile) runs the app on
+  any Docker host (port 7860; set `PORT` to change it).
+- To try production locally: `npm run build`, then `npm start` (with Postgres running) and open <http://localhost:3001>.
 
 ## Testing
 
